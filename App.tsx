@@ -1,115 +1,116 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * Generated with the TypeScript template
- * https://github.com/react-native-community/react-native-template-typescript
- *
- * @format
- */
+import React, { ReactNode, useEffect } from "react";
+import { createNativeStackNavigator, NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { NavigationContainer, RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import { Alert, Button, StyleSheet, Text, View } from "react-native";
+import { linking } from "./linking";
 
-import React from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+const {Screen, Navigator} = createNativeStackNavigator();
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+enum NavigationStackKey {
+  Home = 'Profile',
+  Feed= 'Feed',
+  Messages = 'Messages',
+  Profile = 'Profile',
+  Settings = 'Settings',
+}
 
-const Section: React.FC<{
-  title: string;
-}> = ({children, title}) => {
-  const isDarkMode = useColorScheme() === 'dark';
+type NavigationStackParamList = {
+  [NavigationStackKey.Profile]: { id: string }
+}
+
+export type RootStackParamListType = {
+  [NavigationStackKey.Home]: undefined;
+  [NavigationStackKey.Feed]: undefined;
+  [NavigationStackKey.Settings]: undefined;
+  [NavigationStackKey.Messages]: undefined;
+};
+
+type HomeScreenNavigateType =
+  NativeStackNavigationProp<RootStackParamListType, NavigationStackKey.Home>;
+
+type SettingsScreenNavigateType =
+  NativeStackNavigationProp<RootStackParamListType, NavigationStackKey.Settings>;
+
+const Container = ({children}: { children: ReactNode }) => (
+  <View style={styles.container}>
+    <Text style={styles.title}>{children}</Text>
+  </View>
+);
+
+const Feed = () => <Container>Feed</Container>;
+
+const Messages = () => <Container>Messages</Container>;
+
+const Profile = () => {
+  const { params: { id } } =
+    useRoute<RouteProp<NavigationStackParamList, NavigationStackKey.Profile>>();
+
+  useEffect(() => {
+    if (id) {
+      Alert.alert('', `ID ~ ${id}`);
+    }
+  }, [id])
+
+  return <Container>Profile</Container>
+};
+
+const Settings = () => {
+  const { navigate } = useNavigation<SettingsScreenNavigateType>();
+
+  const onFeedPress = () => navigate(NavigationStackKey.Feed);
+
+  const onMessagesPress = () => navigate(NavigationStackKey.Messages);
+
   return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
+    <View style={styles.container}>
+      <View style={styles.container}>
+        <Text style={styles.title}>Settings</Text>
+        <Button title={NavigationStackKey.Feed} onPress={onFeedPress} />
+        <Button title={NavigationStackKey.Messages} onPress={onMessagesPress} />
+      </View>
+    </View>
+  );
+};
+
+const Home = () => {
+  const { navigate } = useNavigation<HomeScreenNavigateType>();
+
+  const onProfilePress = () => navigate(NavigationStackKey.Profile);
+
+  const onSettingsPress = () => navigate(NavigationStackKey.Settings);
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>Home</Text>
+      <Button title={NavigationStackKey.Profile} onPress={onProfilePress} />
+      <Button title={NavigationStackKey.Settings} onPress={onSettingsPress} />
     </View>
   );
 };
 
 const App = () => {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+    <NavigationContainer linking={linking}>
+      <Navigator>
+        <Screen name="Home" component={Home} />
+        <Screen name="Profile" component={Profile} />
+        <Screen name="Settings" component={Settings} />
+        <Screen name="Feed" component={Feed} />
+        <Screen name="Messages" component={Messages} />
+      </Navigator>
+    </NavigationContainer>
   );
 };
 
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
-
 export default App;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  title: {
+    fontSize: 22,
+  }
+})
