@@ -1,22 +1,30 @@
-import React, { ReactNode, useEffect } from "react";
-import { createNativeStackNavigator, NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { NavigationContainer, RouteProp, useNavigation, useRoute } from "@react-navigation/native";
-import { Alert, Button, StyleSheet, Text, View } from "react-native";
-import { linking } from "./linking";
+import React, {ReactNode, useEffect} from 'react';
+import {
+  createNativeStackNavigator,
+  NativeStackNavigationProp,
+} from '@react-navigation/native-stack';
+import {
+  NavigationContainer,
+  RouteProp,
+  useNavigation,
+  useRoute,
+} from '@react-navigation/native';
+import {Alert, Button, StyleSheet, Text, View} from 'react-native';
+import {linking} from './linking';
 
 const {Screen, Navigator} = createNativeStackNavigator();
 
 enum NavigationStackKey {
   Home = 'Profile',
-  Feed= 'Feed',
+  Feed = 'Feed',
   Messages = 'Messages',
   Profile = 'Profile',
   Settings = 'Settings',
 }
 
 type NavigationStackParamList = {
-  [NavigationStackKey.Profile]: { id: string }
-}
+  [NavigationStackKey.Profile]: {id: string};
+};
 
 export type RootStackParamListType = {
   [NavigationStackKey.Home]: undefined;
@@ -25,13 +33,17 @@ export type RootStackParamListType = {
   [NavigationStackKey.Messages]: undefined;
 };
 
-type HomeScreenNavigateType =
-  NativeStackNavigationProp<RootStackParamListType, NavigationStackKey.Home>;
+type HomeScreenNavigateType = NativeStackNavigationProp<
+  RootStackParamListType,
+  NavigationStackKey.Home
+>;
 
-type SettingsScreenNavigateType =
-  NativeStackNavigationProp<RootStackParamListType, NavigationStackKey.Settings>;
+type SettingsScreenNavigateType = NativeStackNavigationProp<
+  RootStackParamListType,
+  NavigationStackKey.Settings
+>;
 
-const Container = ({children}: { children: ReactNode }) => (
+const Container = ({children}: {children: ReactNode}) => (
   <View style={styles.container}>
     <Text style={styles.title}>{children}</Text>
   </View>
@@ -42,20 +54,22 @@ const Feed = () => <Container>Feed</Container>;
 const Messages = () => <Container>Messages</Container>;
 
 const Profile = () => {
-  const { params: { id } } =
+  const route =
     useRoute<RouteProp<NavigationStackParamList, NavigationStackKey.Profile>>();
+
+  const id = route.params?.id || '';
 
   useEffect(() => {
     if (id) {
       Alert.alert('', `ID ~ ${id}`);
     }
-  }, [id])
+  }, [id]);
 
-  return <Container>Profile</Container>
+  return <Container>Profile</Container>;
 };
 
 const Settings = () => {
-  const { navigate } = useNavigation<SettingsScreenNavigateType>();
+  const {navigate} = useNavigation<SettingsScreenNavigateType>();
 
   const onFeedPress = () => navigate(NavigationStackKey.Feed);
 
@@ -73,7 +87,7 @@ const Settings = () => {
 };
 
 const Home = () => {
-  const { navigate } = useNavigation<HomeScreenNavigateType>();
+  const {navigate} = useNavigation<HomeScreenNavigateType>();
 
   const onProfilePress = () => navigate(NavigationStackKey.Profile);
 
@@ -107,10 +121,10 @@ export default App;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center"
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   title: {
     fontSize: 22,
-  }
-})
+  },
+});
